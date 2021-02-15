@@ -1,0 +1,3 @@
+= FODS Reader
+
+Very simple Open Office Calc flat file format reader.
