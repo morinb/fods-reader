@@ -32,8 +32,28 @@ public final class Logger {
     public void error(Function<Void, String> message, Object... arguments) {
         if (LOGGER.isErrorEnabled()) {
             populateCaller();
-            LOGGER.error(String.format(message.apply(null), arguments)
-            );
+            LOGGER.error(message.apply(null), arguments);
+        }
+    }
+
+    public void error(Function<Void, String> message, Throwable throwable, Object... arguments) {
+        if (LOGGER.isErrorEnabled()) {
+            populateCaller();
+            LOGGER.error(message.apply(null), throwable, arguments);
+        }
+    }
+
+    public void warn(Function<Void, String> message, Object... arguments) {
+        if (LOGGER.isWarnEnabled()) {
+            populateCaller();
+            LOGGER.warn(message.apply(null), arguments);
+        }
+    }
+
+    public void warn(Function<Void, String> message, Throwable throwable, Object... arguments) {
+        if (LOGGER.isWarnEnabled()) {
+            populateCaller();
+            LOGGER.warn(message.apply(null), throwable, arguments);
         }
     }
 
