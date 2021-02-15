@@ -17,12 +17,15 @@
 package com.github.morinb.fods.reader;
 
 import com.github.morinb.fods.reader.content.Table;
+import com.github.morinb.fods.reader.content.cell.FormulaCell;
 import com.github.morinb.fods.reader.exceptions.Logger;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class OfficeDocumentTest {
     private static Logger LOGGER = new Logger();
@@ -33,22 +36,57 @@ class OfficeDocumentTest {
 
             OfficeDocument officeDocument = new OfficeDocument(simpleCellsFods);
 
-            Assertions.assertNotNull(officeDocument);
-            Assertions.assertNotNull(officeDocument.getBody());
-            Assertions.assertNotNull(officeDocument.getBody().getSpreadsheet());
+            assertNotNull(officeDocument);
+            assertNotNull(officeDocument.getBody());
+            assertNotNull(officeDocument.getBody().getSpreadsheet());
 
             final Table feuille1 = officeDocument.getBody().getSpreadsheet().getByName("Feuille1").orElse(null);
-            Assertions.assertNotNull(feuille1);
-            Assertions.assertEquals("Feuille1", feuille1.getName());
-            Assertions.assertEquals(6, feuille1.getNumberOfColumns());
-            Assertions.assertEquals(6, feuille1.getRows().size());
-            Assertions.assertEquals("A1", feuille1.getValueAt(0, 0));
-            Assertions.assertEquals("B1", feuille1.getValueAt(0, 1));
-            Assertions.assertEquals("B2", feuille1.getValueAt(1, 1));
-            Assertions.assertEquals("C2", feuille1.getValueAt(1, 2));
-            Assertions.assertEquals("D3", feuille1.getValueAt(2, 3));
-            Assertions.assertEquals("D4", feuille1.getValueAt(3, 3));
-            Assertions.assertEquals("F6", feuille1.getValueAt(5, 5));
+            assertNotNull(feuille1);
+            assertEquals("Feuille1", feuille1.getName());
+            assertEquals(6, feuille1.getNumberOfColumns());
+            assertEquals(6, feuille1.getRows().size());
+            assertEquals("A1", feuille1.getValueAt(1, 1));
+            assertEquals("B1", feuille1.getValueAt(1, 2));
+            assertEquals("B2", feuille1.getValueAt(2, 2));
+            assertEquals("C2", feuille1.getValueAt(2, 3));
+            assertEquals("D3", feuille1.getValueAt(3, 4));
+            assertEquals("D4", feuille1.getValueAt(4, 4));
+            assertEquals("F6", feuille1.getValueAt(6, 6));
+
+        } catch (IOException e) {
+            LOGGER.error(unused -> "", e);
+        }
+    }
+
+    @Test
+    public void testTwoSheets() {
+        try (InputStream simpleCellsFods = getClass().getResourceAsStream("/fods/simple/TwoSheets.fods")) {
+
+            OfficeDocument officeDocument = new OfficeDocument(simpleCellsFods);
+
+            assertNotNull(officeDocument);
+            assertNotNull(officeDocument.getBody());
+            assertNotNull(officeDocument.getBody().getSpreadsheet());
+
+            final Table feuille1 = officeDocument.getBody().getSpreadsheet().getByName("Feuille1").orElse(null);
+            assertNotNull(feuille1);
+            assertEquals("Feuille1", feuille1.getName());
+            assertEquals(4, feuille1.getNumberOfColumns());
+            assertEquals(5, feuille1.getRows().size());
+            assertEquals("Sp1A1", feuille1.getValueAt(1, 1));
+            assertEquals("Sp1D5", feuille1.getValueAt(5, 4));
+
+            final Table feuille2 = officeDocument.getBody().getSpreadsheet().getByName("Feuille2").orElse(null);
+            assertNotNull(feuille2);
+            assertEquals("Feuille2", feuille2.getName());
+            assertEquals(4, feuille2.getNumberOfColumns());
+            assertEquals(5, feuille2.getRows().size());
+            assertEquals("of:=3+2", ((FormulaCell) feuille2.getCellAt(1, 1)).getFormula());
+            assertEquals("5", feuille2.getValueAt(1, 1));
+            assertEquals("VRAI", feuille2.getValueAt(1, 2));
+            assertEquals("1,00443089430894", feuille2.getValueAt(1, 3));
+            assertEquals("Hello", feuille2.getValueAt(1, 4));
+            assertEquals("Sp2D5", feuille2.getValueAt(5, 4));
 
         } catch (IOException e) {
             LOGGER.error(unused -> "", e);

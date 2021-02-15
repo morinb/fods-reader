@@ -140,7 +140,14 @@ public class OfficeDocument {
                         nbCol += Integer.parseInt(numberOfColumnsRepeated.getNodeValue());
                     }
                 } else if (item.getNodeName().equals("table:table-row")) {
-                    rows.add(readRow(item));
+                    int nbRowRepeat = 1;
+                    final Node numberRowRepeatedNode = item.getAttributes().getNamedItem("table:number-rows-repeated");
+                    if (numberRowRepeatedNode != null) {
+                        nbRowRepeat = Integer.parseInt(numberRowRepeatedNode.getNodeValue());
+                    }
+                    for (int nbRowRepeatIndex = 0; nbRowRepeatIndex < nbRowRepeat; nbRowRepeatIndex++) {
+                        rows.add(readRow(item));
+                    }
                 } else {
                     LOGGER.warn(unused -> "Unknown item '{}'", item.getNodeName());
                 }
@@ -152,13 +159,16 @@ public class OfficeDocument {
 
     private List<Cell> readRow(Node itemRow) {
         final List<Cell> cells = new ArrayList<>();
+
         final NodeList childNodes = itemRow.getChildNodes();
+
         for (int index = 0; index < childNodes.getLength(); index++) {
             final Node cellNode = childNodes.item(index);
             if (cellNode.getNodeType() == Node.ELEMENT_NODE) {
 
                 if (!cellNode.hasChildNodes()) {
-                    final Node numberOfColumnsRepeated = cellNode.getAttributes().getNamedItem("table:number-columns" +
+                    final Node numberOfColumnsRepeated = cellNode.getAttributes().getNamedItem("table:number" +
+                            "-columns" +
                             "-repeated");
                     int nbEmptyCells = 1;
                     if (numberOfColumnsRepeated != null) {
@@ -191,7 +201,6 @@ public class OfficeDocument {
                     }
                 }
             }
-
         }
 
         return cells;

@@ -34,11 +34,16 @@ public class Table {
     @Singular()
     List<List<Cell>> rows;
 
-    public String getValueAt(int row, int col) {
-        if (row >= rows.size() || col >= numberOfColumns) {
-            throw new InvalidCoordinatesException(row, col, rows.size() - 1, numberOfColumns - 1);
+    public Cell getCellAt(int row, int col) {
+        if (row > rows.size() || col > numberOfColumns) {
+            throw new InvalidCoordinatesException(row, col, rows.size()
+                    , numberOfColumns);
         }
 
-        return rows.get(row).get(col).getText();
+        return rows.get(row - 1).get(col - 1);
+    }
+
+    public String getValueAt(int row, int col) {
+        return getCellAt(row, col).getText();
     }
 }
