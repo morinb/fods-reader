@@ -106,7 +106,8 @@
                     <localCheckout>true</localCheckout>
                     <pushChanges>false</pushChanges>
                     <mavenExecutorId>forked-path</mavenExecutorId>
-<!--                    <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>-->
+                    <!--                    in settings.xml-->
+                    <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
@@ -185,7 +186,6 @@
             </build>
         </profile>
     </profiles>
-
 
 
 </project>
