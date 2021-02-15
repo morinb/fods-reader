@@ -1,6 +1,6 @@
 = FODS Reader
 
-image:https://img.shields.io/maven-central/v/com.github.morinb/fods-reader[]
+image:https://img.shields.io/maven-central/v/com.github.morinb/fods-reader["Maven Central Version", link="https://search.maven.org/artifact/com.github.morinb/fods-reader"]
 image:https://travis-ci.com/morinb/fods-reader.svg?branch=master["Build Status", link="https://img.shields.io/travis/com/morinb/fods-reader"]
 image:https://jitpack.io/v/morinb/fods-reader.svg["JitPack Version", link="https://jitpack.io/#morinb/fods-reader"]
 
