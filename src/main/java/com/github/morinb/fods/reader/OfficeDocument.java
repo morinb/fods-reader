@@ -63,8 +63,16 @@ public class OfficeDocument {
 
     public OfficeDocument(InputStream inputStream) {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (IllegalArgumentException exception) {
+            LOGGER.warn(unused -> "", exception);
+        }
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        } catch (IllegalArgumentException exception) {
+            LOGGER.warn(unused -> "", exception);
+        }
 
 
         try {
@@ -138,6 +146,8 @@ public class OfficeDocument {
                             "-repeated");
                     if (numberOfColumnsRepeated != null) {
                         nbCol += Integer.parseInt(numberOfColumnsRepeated.getNodeValue());
+                    } else {
+                        nbCol++;
                     }
                 } else if (item.getNodeName().equals("table:table-row")) {
                     int nbRowRepeat = 1;
@@ -167,17 +177,30 @@ public class OfficeDocument {
             if (cellNode.getNodeType() == Node.ELEMENT_NODE) {
 
                 if (!cellNode.hasChildNodes()) {
-                    final Node numberOfColumnsRepeated = cellNode.getAttributes().getNamedItem("table:number" +
-                            "-columns" +
-                            "-repeated");
-                    int nbEmptyCells = 1;
-                    if (numberOfColumnsRepeated != null) {
-                        nbEmptyCells = Integer.parseInt(numberOfColumnsRepeated.getNodeValue());
-                    }
-                    for (int i = 0; i < nbEmptyCells; i++) {
+                    if (cellNode.hasAttributes()) {
+                        final Node nbColumnsRepeated = cellNode.getAttributes().getNamedItem("table:number-columns" +
+                                "-repeated");
+                        if (nbColumnsRepeated != null) {
+                            int nbEmptyCells = Integer.parseInt(nbColumnsRepeated.getNodeValue());
+                            for (int i = 0; i < nbEmptyCells; i++) {
+                                cells.add(EmptyCell.EMPTY_CELL);
+                            }
+                        } else {
+                            cells.add(EmptyCell.EMPTY_CELL);
+                        }
+                    } else {
                         cells.add(EmptyCell.EMPTY_CELL);
                     }
                 } else {
+                    int nbRepeat = 1;
+                    if (cellNode.hasAttributes()) {
+                        final Node nbColumnsRepeated = cellNode.getAttributes().getNamedItem("table:number-columns" +
+                                "-repeated");
+                        if (nbColumnsRepeated != null) {
+                            nbRepeat = Integer.parseInt(nbColumnsRepeated.getNodeValue());
+                        }
+                    }
+
                     final NodeList textNodeList = cellNode.getChildNodes();
                     int nbTextNodes = 0;
                     for (int textNodeIndex = 0; textNodeIndex < textNodeList.getLength(); textNodeIndex++) {
@@ -189,15 +212,18 @@ public class OfficeDocument {
                             }
                             final Node formulaAttribute = cellNode.getAttributes().getNamedItem("table:formula");
                             String text = textNode.getFirstChild().getNodeValue();
-                            if (formulaAttribute != null) {
-                                ValueType valueType = ValueType.valueOf(cellNode.getAttributes()
-                                        .getNamedItem("office:value-type").getNodeValue().toUpperCase(Locale.ENGLISH));
-                                String formula = formulaAttribute.getNodeValue();
-                                cells.add(new FormulaCell(text, formula, valueType));
-                            } else {
-                                cells.add(new TextCell(text));
+                            for (int repeat = 0; repeat < nbRepeat; repeat++) {
+                                if (formulaAttribute != null) {
+                                    ValueType valueType = ValueType.valueOf(cellNode.getAttributes()
+                                            .getNamedItem("office:value-type").getNodeValue().toUpperCase(Locale.ENGLISH));
+                                    String formula = formulaAttribute.getNodeValue();
+                                    cells.add(new FormulaCell(text, formula, valueType));
+                                } else {
+                                    cells.add(new TextCell(text));
+                                }
                             }
                         }
+
                     }
                 }
             }
