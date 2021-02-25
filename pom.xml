@@ -20,7 +20,7 @@
 
     <groupId>com.github.morinb</groupId>
     <artifactId>fods-reader</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.0.5</version>
 
     <name>FODS Reader</name>
 
@@ -190,7 +190,7 @@
         <connection>scm:git:https://github.com/morinb/fods-reader.git</connection>
         <developerConnection>scm:git:https://github.com/morinb/fods-reader.git</developerConnection>
         <url>https://github.com/morinb/fods-reader</url>
-        <tag>master</tag>
+        <tag>0.0.5</tag>
     </scm>
 
     <profiles>
