@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Baptiste
+ * Copyright 2021 baptiste
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.github.morinb.fods.reader.content.CellType;
 import com.github.morinb.fods.reader.content.ValueType;
 
 public class EmptyCell implements Cell {
-    public static Cell EMPTY_CELL = new EmptyCell();
+    public static final Cell EMPTY_CELL = new EmptyCell();
 
     private EmptyCell() {
         // private constructor

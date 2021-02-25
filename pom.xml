@@ -51,7 +51,7 @@
     </organization>
 
     <properties>
-
+        <sonar.exclusions>.mvn/**</sonar.exclusions>
     </properties>
 
     <dependencies>
@@ -170,6 +170,20 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.8.0.2131</version>
+                <executions>
+                    <execution>
+                        <id>sonar</id>
+                        <goals>
+                            <goal>sonar</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

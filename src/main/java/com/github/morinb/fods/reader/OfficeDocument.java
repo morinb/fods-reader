@@ -56,11 +56,17 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OfficeDocument {
     private static final Logger LOGGER = new Logger();
+    public static final String TABLE_NUMBER_COLUMNS_REPEATED = "table:number-columns-repeated";
 
     private Metadata metadata;
     private Settings settings;
     private Body body;
 
+    /**
+     * Creates an OfficeDocument from a Flat ODS file input stream.
+     *
+     * @param inputStream the fods file inputstream.
+     */
     public OfficeDocument(InputStream inputStream) {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
@@ -92,21 +98,28 @@ public class OfficeDocument {
         }
     }
 
+
+    /**
+     * Read the body part of fods file
+     *
+     * @param nodeList the office:body xml node
+     * @return the Body element
+     */
     private Body readBody(NodeList nodeList) {
         if (nodeList.getLength() != 1) {
             throw new TooManyBodyItemException(nodeList.getLength());
         }
-        final Node body = nodeList.item(0);
+        final Node bodyNode = nodeList.item(0);
 
         int nbBodyChildElements = 0;
-        final NodeList bodyChildNodes = body.getChildNodes();
+        final NodeList bodyChildNodes = bodyNode.getChildNodes();
         CalculationSettings calculationSettings = new CalculationSettings(false, false, false);
         final List<Table> tables = new ArrayList<>();
         for (int bodyIndex = 0; bodyIndex < bodyChildNodes.getLength(); bodyIndex++) {
             if (bodyChildNodes.item(bodyIndex).getNodeType() == Node.ELEMENT_NODE) {
                 nbBodyChildElements++;
                 if (nbBodyChildElements > 1) {
-                    throw new TooManySpreadsheetItemException(body.getChildNodes().getLength());
+                    throw new TooManySpreadsheetItemException(bodyNode.getChildNodes().getLength());
                 }
 
                 final Node spreadSheet = bodyChildNodes.item(bodyIndex);
@@ -142,8 +155,8 @@ public class OfficeDocument {
             final Node item = childNodes.item(index);
             if (item.getNodeType() == Node.ELEMENT_NODE) {
                 if (item.getNodeName().equals("table:table-column")) {
-                    final Node numberOfColumnsRepeated = item.getAttributes().getNamedItem("table:number-columns" +
-                            "-repeated");
+                    final Node numberOfColumnsRepeated =
+                            item.getAttributes().getNamedItem(TABLE_NUMBER_COLUMNS_REPEATED);
                     if (numberOfColumnsRepeated != null) {
                         nbCol += Integer.parseInt(numberOfColumnsRepeated.getNodeValue());
                     } else {
@@ -178,8 +191,8 @@ public class OfficeDocument {
 
                 if (!cellNode.hasChildNodes()) {
                     if (cellNode.hasAttributes()) {
-                        final Node nbColumnsRepeated = cellNode.getAttributes().getNamedItem("table:number-columns" +
-                                "-repeated");
+                        final Node nbColumnsRepeated = cellNode.getAttributes().getNamedItem(
+                                TABLE_NUMBER_COLUMNS_REPEATED);
                         if (nbColumnsRepeated != null) {
                             int nbEmptyCells = Integer.parseInt(nbColumnsRepeated.getNodeValue());
                             for (int i = 0; i < nbEmptyCells; i++) {
@@ -244,17 +257,15 @@ public class OfficeDocument {
     }
 
     private Settings readSettings(NodeList nodeList) {
-        Settings settings = new Settings();
         // TODO implement settings read
 
-        return settings;
+        return new Settings();
     }
 
     private Metadata readMetadata(NodeList nodeList) {
-        final Metadata metadata = new Metadata();
         // TODO implement metadata
 
-        return metadata;
+        return new Metadata();
     }
 
 

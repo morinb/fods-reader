@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Baptiste
+ * Copyright 2021 baptiste
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class OfficeDocumentTest {
-    private static Logger LOGGER = new Logger();
+    private static final Logger LOGGER = new Logger();
 
     @Test
-    public void testSimpleCells() {
+    void testSimpleCells() {
         try (InputStream simpleCellsFods = getClass().getResourceAsStream("/fods/simple/SimpleCells.fods")) {
 
             OfficeDocument officeDocument = new OfficeDocument(simpleCellsFods);
@@ -59,7 +59,7 @@ class OfficeDocumentTest {
     }
 
     @Test
-    public void testTwoSheets() {
+    void testTwoSheets() {
         try (InputStream simpleCellsFods = getClass().getResourceAsStream("/fods/simple/TwoSheets.fods")) {
 
             OfficeDocument officeDocument = new OfficeDocument(simpleCellsFods);
